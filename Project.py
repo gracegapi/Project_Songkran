@@ -39,6 +39,9 @@ def to_range(text, period):
     """Return list each number in this period depends on input entered."""
     if text[0] == '-':
         return False
+    for i in text:
+        if i.isalpha():
+            return False
     if "-" in text:
         text = [int(num) for num in text.split("-")]
     else:
@@ -55,4 +58,5 @@ def fix_sex(sex):
     sex = ['หญิง'] if sex == ['girl'] or sex == ['woman'] or sex == ['female'] or sex == ['women'] or \
           sex == ['lady'] else sex
     return sex
+
 main()
