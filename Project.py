@@ -9,9 +9,10 @@ def main():
     year = to_range(input("ช่วงเวลา(ex. 2554-2557) : "))
     city = input("จังหวัด : ")
     day = to_range(input("วันที่เกิดเหตุ(ex. 11-15) : "))
-    sex = [input("เพศ(ถ้าต้องการดูทั้งหมดพิมพ์ all) : ")]
-    if sex == ["all"]:
-        sex = ['ชาย', 'หญิง']
+    sex = [input("เพศ(ถ้าต้องการดูทั้งหมดพิมพ์ all) : ").lower()]
+    sex = ['ชาย', 'หญิง'] if sex == ["all"] else sex
+    sex = ['ชาย'] if sex == ['boy'] or sex == ['man'] or sex == ['men'] or sex == ['male'] else sex
+    sex = ['หญิง'] if sex == ['girl'] or sex == ['woman'] or sex == ['female'] else sex
     age = to_range(input('ช่วงอายุ(ex. 15-27) : '))
     print("Processing...")
     show = {}
