@@ -22,18 +22,21 @@ def main():
         if age == False:
             print("Please input age more than zero.")
     print("Processing...")
-    show = {}
-    for i in year: ## Create dict.
-        show[i] = 0
+    show, status = {}, {"ผู้ขับขี่": 0, "ผู้โดยสาร": 0, "คนเดินเท้า": 0, "ไม่ทราบ": 0, "จักรยานยนต์": 0}
+    for num in year: ## Create dict.
+        show[num] = 0
     for row in table:
         if row[0] in year:
-            show[row[0]] += 1 if row[1] == province and row[2] in day and row[3] in sex \
-                            and row[4] in age else 0
-    for i in sorted(show):
-        print(i+" : "+str(show[i])+" คน")
+            if row[1] == province and row[2] in day and row[3] in sex and row[4] in age:
+                show[row[0]] += 1
+                status[row[5]] += 1
+    for num in sorted(show):
+        print(num+" : "+str(show[num])+" คน")
+        for number in sorted(status):
+            print(number+" : "+str(status[number])+" คน")
 
 def to_range(text, period):
-    """Convert period according to input entered to list each number in this period."""
+    """Return list each number in this period depends on input entered."""
     if text[0] == '-':
         return False
     if "-" in text:
@@ -47,7 +50,9 @@ def to_range(text, period):
 def fix_sex(sex):
     """Return sex of input entered."""
     sex = ['ชาย', 'หญิง'] if sex == ["all"] else sex
-    sex = ['ชาย'] if sex == ['boy'] or sex == ['man'] or sex == ['men'] or sex == ['male'] else sex
-    sex = ['หญิง'] if sex == ['girl'] or sex == ['woman'] or sex == ['female'] else sex
+    sex = ['ชาย'] if sex == ['boy'] or sex == ['man'] or sex == ['men'] or sex == ['male'] or \
+          sex == ['gentle'] or sex == ['masculine'] else sex
+    sex = ['หญิง'] if sex == ['girl'] or sex == ['woman'] or sex == ['female'] or sex == ['women'] or \
+          sex == ['lady'] else sex
     return sex
 main()
