@@ -18,9 +18,9 @@ def main():
             print("Please input day between 10-18.")
     sex = fix_sex([input("เพศ(ถ้าต้องการดูทั้งหมดพิมพ์ All) : ").lower()])
     while age == False:
-        age = to_range(input('ช่วงอายุ(Ex. 15-27) : '), list(range(1000)))
+        age = to_range(input('ช่วงอายุ(Ex. 15-27) : '), list(range(201)))
         if age == False:
-            print("Please input age more than zero.")
+            print("Please input age between 0-200.")
     print("Processing...")
     show, status, vehicle, parties_vehicle, drink_status = {}, {}, {}, {}, {}
     for num in year: ## Create dict.
@@ -83,8 +83,8 @@ def fix_sex(sex):
     sex = ['ชาย', 'หญิง'] if sex == ["all"] else sex
     sex = ['ชาย'] if sex == ['boy'] or sex == ['man'] or sex == ['men'] or sex == ['male'] or \
           sex == ['gentle'] or sex == ['masculine'] else sex
-    sex = ['หญิง'] if sex == ['girl'] or sex == ['woman'] or sex == ['female'] or sex == ['women'] or \
-          sex == ['lady'] else sex
+    sex = ['หญิง'] if sex == ['girl'] or sex == ['woman'] or sex == ['female'] or \
+          sex == ['women'] or sex == ['lady'] else sex
     return sex
 
 main()
