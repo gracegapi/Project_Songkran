@@ -22,26 +22,47 @@ def main():
         if age == False:
             print("Please input age more than zero.")
     print("Processing...")
-    show, status = {}, {}
+    show, status, vehicle, parties_vehicle, drink_status = {}, {}, {}, {}, {}
     for num in year: ## Create dict.
         show[num] = 0
         status[num] = {"ผู้ขับขี่": 0, "ผู้โดยสาร": 0, "คนเดินเท้า": 0, "ไม่ทราบ": 0}
+        vehicle[num] = {"รถเก๋ง/แท็กซี่": 0, "จักรยานยนต์": 0, "รถจักรยาน": 0, "ไม่ทราบ": 0, "สามล้อถีบ": 0,\
+                        "สามล้อเครื่อง": 0, "ไม่มี/ล้มเอง": 0, "ปิคอัพ": 0, "อื่นๆ": 0,\
+                        "รถโดยสารใหญ่": 0, "รถโดยสาร4ล้อ": 0, "รถบรรทุก": 0, "รถตู้": 0}
+        parties_vehicle[num] = {"รถเก๋ง/แท็กซี่": 0, "จักรยานยนต์": 0, "รถจักรยาน": 0, "ไม่ทราบ": 0, "สามล้อถีบ": 0,\
+                        "สามล้อเครื่อง": 0, "ไม่มี/ล้มเอง": 0, "ปิคอัพ": 0, "อื่นๆ": 0,\
+                        "รถโดยสารใหญ่": 0, "รถโดยสาร4ล้อ": 0, "รถบรรทุก": 0, "รถตู้": 0}
+        drink_status[num] = {"ดื่ม": 0, "ไม่ดื่ม": 0, "ไม่ทราบ": 0}
     for row in table:
         if row[0] in year:
             if row[1] == province and row[2] in day and row[3] in sex and row[4] in age:
                 show[row[0]] += 1
                 status[row[0]][row[5]] += 1
+                vehicle[row[0]][row[6]] += 1
+                parties_vehicle[row[0]][row[7]] += 1
+                drink_status[row[0]][row[8]] += 1
     for num in sorted(show):
         print(num+" : "+str(show[num])+" คน")
+        print("* สถานะของผู้ประสบอุบัติเหตุ *")
         for text in sorted(status[num]):
             print(text+" : "+str(status[num][text])+" คน")
+        print("* ยานพาหนะของผู้ประสบอุบัติเหตุ *")
+        for text in sorted(vehicle[num]):
+            print(text+" : "+str(vehicle[num][text])+" คัน")
+        print("* ยานพาหนะของคู่กรณี *")
+        for text in sorted(parties_vehicle[num]):
+            print(text+" : "+str(parties_vehicle[num][text])+" คัน")
+        print("* สถานะการดื่มของผู้ประสบอุบัติเหตุ *")
+        for text in sorted(drink_status[num]):
+            print(text+" : "+str(drink_status[num][text])+" คน")
+        print()
 
 def to_range(text, period):
-    """Return list each number in this period depends on input entered."""
+    """Return list each number in this period depends on input entered, False otherwise."""
     if text[0] == '-':
         return False
-    for i in text:
-        if i.isalpha():
+    for char in text:
+        if char.isalpha():
             return False
     if "-" in text:
         text = [int(num) for num in text.split("-")]
