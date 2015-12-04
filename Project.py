@@ -22,18 +22,19 @@ def main():
         if age == False:
             print("Please input age more than zero.")
     print("Processing...")
-    show, status = {}, {"ผู้ขับขี่": 0, "ผู้โดยสาร": 0, "คนเดินเท้า": 0, "ไม่ทราบ": 0, "จักรยานยนต์": 0}
+    show, status = {}, {}
     for num in year: ## Create dict.
         show[num] = 0
+        status[num] = {"ผู้ขับขี่": 0, "ผู้โดยสาร": 0, "คนเดินเท้า": 0, "ไม่ทราบ": 0}
     for row in table:
         if row[0] in year:
             if row[1] == province and row[2] in day and row[3] in sex and row[4] in age:
                 show[row[0]] += 1
-                status[row[5]] += 1
+                status[row[0]][row[5]] += 1
     for num in sorted(show):
         print(num+" : "+str(show[num])+" คน")
-        for number in sorted(status):
-            print(number+" : "+str(status[number])+" คน")
+        for text in sorted(status[num]):
+            print(text+" : "+str(status[num][text])+" คน")
 
 def to_range(text, period):
     """Return list each number in this period depends on input entered."""
