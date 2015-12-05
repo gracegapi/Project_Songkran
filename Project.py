@@ -70,7 +70,8 @@ def main():
             for text in sorted(drink_status[num]):
                 if drink_status[num][text] != 0:
                     print(text+" : "+str(drink_status[num][text])+" คน")
-            graph_vehicle(vehicle, parties_vehicle, num, province) ## Create graph vehicle
+            #graph_seven(day, day_dict, num, province) ## Creat graph of seven dangerous days.
+            graph_vehicle(vehicle, parties_vehicle, num, province) ## Create graph of vehicles.
         print()
 
 def to_range(text, period):
@@ -98,12 +99,15 @@ def fix_sex(sex):
     return sex
 
 def graph_vehicle(vehicle, parties_vehicle, year, province):
+    """Creat graph of vehicles depends on input entered."""
     data = []
     for text in sorted(vehicle[year]):
+        if vehicle[year][text] == 0 and parties_vehicle[year][text] == 0:
+            continue
         data.append(go.Bar(x = ["ยานพาหนะของผู้ประสบอุบัติเหตุ", "ยานพาหนะของคู่กรณี"], \
                            y = [vehicle[year][text], parties_vehicle[year][text]], name = text))
     layout = go.Layout(barmode='group')
     fig = go.Figure(data=data, layout=layout)
-    plot_url = py.plot(fig, filename='vehicle graph '+year+' '+province)
+    plot_url = py.plot(fig, filename='vehicles graph '+year+' '+province)
 
 main()
