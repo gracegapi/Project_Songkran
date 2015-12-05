@@ -1,5 +1,7 @@
 """Show a number of accidents during songkarn festival between 10-18."""
 import csv
+import plotly.plotly as py
+import plotly.graph_objs as go
 def main():
     """"""
     file = open('database.txt')
@@ -68,6 +70,7 @@ def main():
             for text in sorted(drink_status[num]):
                 if drink_status[num][text] != 0:
                     print(text+" : "+str(drink_status[num][text])+" คน")
+            graph_vehicle(vehicle, parties_vehicle, num, province) ## Create graph vehicle
         print()
 
 def to_range(text, period):
@@ -93,5 +96,14 @@ def fix_sex(sex):
     sex = ['หญิง'] if sex == ['girl'] or sex == ['woman'] or sex == ['female'] or \
           sex == ['women'] or sex == ['lady'] else sex
     return sex
+
+def graph_vehicle(vehicle, parties_vehicle, year, province):
+    data = []
+    for text in sorted(vehicle[year]):
+        data.append(go.Bar(x = ["ยานพาหนะของผู้ประสบอุบัติเหตุ", "ยานพาหนะของคู่กรณี"], \
+                           y = [vehicle[year][text], parties_vehicle[year][text]], name = text))
+    layout = go.Layout(barmode='group')
+    fig = go.Figure(data=data, layout=layout)
+    plot_url = py.plot(fig, filename='vehicle graph '+year+' '+province)
 
 main()
