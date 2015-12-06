@@ -39,7 +39,8 @@ def main():
         drink_status[num] = {"ดื่ม": 0, "ไม่ดื่ม": 0, "ไม่ทราบ": 0}
         day_dict[num] = {'10': 0, '11': 0, '12': 0, '13': 0, '14': 0, '15': 0, '16': 0, \
                          '17': 0, '18': 0}
-        age_dict[num] = {'0-20': 0, '21-40': 0, '41-60': 0, '61-100': 0}
+        age_dict[num] = {'0-20': {'ชาย': 0, 'หญิง': 0}, '21-40': {'ชาย': 0, 'หญิง': 0}, \
+                         '41-60': {'ชาย': 0, 'หญิง': 0}, '61-100': {'ชาย': 0, 'หญิง': 0}}
         sex_dict[num] = {"ชาย": 0, "หญิง": 0}
     for row in table:
         if row[0] in year:
@@ -52,13 +53,13 @@ def main():
                 day_dict[row[0]][row[2]] += 1
                 sex_dict[row[0]][row[3]] += 1
                 if row[4] in range(21):
-                    age_dict[num]['0-20'] += 1
+                    age_dict[row[0]]['0-20'][row[3]] += 1
                 elif row[4] in range(21, 41):
-                     age_dict[num]['21-40'] += 1
+                    age_dict[row[0]]['21-40'][row[3]] += 1
                 elif row[4] in range(41, 61):
-                     age_dict[num]['41-60'] += 1
+                    age_dict[row[0]]['41-60'][row[3]] += 1
                 elif row[4] in range(61, 100):
-                     age_dict[num]['61-100'] += 1
+                    age_dict[row[0]]['61-100'][row[3]] += 1
     for num in sorted(total):
         print("ผู้ประสบอุบัติเหตุในปี "+num+" : "+str(total[num])+" คน")
         if total[num] != 0:
@@ -89,7 +90,7 @@ def main():
             graph_seven(day, day_dict, num, province) ## Creat graph of seven dangerous days.
             graph_drink_status(drink_status, num, province) ## Create graph of drink status.
             graph_vehicle(vehicle, parties_vehicle, num, province) ## Create graph of vehicles.
-            graph_sex(sex_dict, num, province) ## Creat graph of sex.
+            graph_sex(sex_dict, age_dict, num, province) ## Creat graph of sex.
         print()
 
 def to_range(text, period):
@@ -139,11 +140,15 @@ def graph_seven(day, day_dict, year, province):
            'layout': {'title': 'Graph of seven dangerous days in ' + str(int(year)-543)}}
     url = py.plot(fig, filename='Seven dangerous days graph '+year+' '+province)
 
-def graph_sex(sex_dict, year, province):
+def graph_sex(sex_dict, age_dict, year, province):
     """Creat graph of sex depends on values incame."""
     data = []
     for text in sorted(sex_dict[year]):
-        data.append(go.Bar(x = ["เพศ"], y = [sex_dict[year][text]], name = text))
+        data.append(go.Bar(x = ["เพศ", "ช่วงอายุ 0-20", "ช่วงอายุ 21-40", "ช่วงอายุ 41-60",\
+                                "ช่วงอายุ 61-100"], \
+                           y = [sex_dict[year][text], age_dict[year]['0-20'][text], \
+                                age_dict[year]['21-40'][text], age_dict[year]['41-60'][text], \
+                                age_dict[year]['61-100'][text]], name = text))
     layout = go.Layout(barmode='group')
     fig = go.Figure(data=data, layout=layout)
     plot_url = py.plot(fig, filename='Sex graph '+year+' '+province)
