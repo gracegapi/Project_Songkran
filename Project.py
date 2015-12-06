@@ -60,7 +60,6 @@ def main():
                     age_dict[row[0]]['41-60'][row[3]] += 1
                 elif row[4] in range(61, 100):
                     age_dict[row[0]]['61-100'][row[3]] += 1
-    print(age_dict[row[0]])
     for num in sorted(total):
         print("ผู้ประสบอุบัติเหตุในปี "+num+" : "+str(total[num])+" คน")
         if total[num] != 0:
