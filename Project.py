@@ -24,7 +24,7 @@ def main():
         if age == False:
             print("Please input age between 0-200.")
     print("Processing...")
-    total, status, vehicle, parties_vehicle, drink_status, day_dict = {}, {}, {}, {}, {}, {}
+    total, status, vehicle, parties_vehicle, drink_status, day_dict, age_dict, sex_dict = {}, {}, {}, {}, {}, {}, {}, {}
     for num in year: ## Create dict.
         total[num] = 0
         status[num] = {"ผู้ขับขี่": 0, "ผู้โดยสาร": 0, "คนเดินเท้า": 0, "ไม่ทราบ": 0}
@@ -39,6 +39,7 @@ def main():
         day_dict[num] = {'10': 0, '11': 0, '12': 0, '13': 0, '14': 0, '15': 0, '16': 0, \
                          '17': 0, '18': 0}
         age_dict[num] = {'0-20': 0, '21-40': 0, '41-60': 0, '61-100': 0}
+        sex_dict[num] = {"ชาย": 0, "หญิง": 0}
     for row in table:
         if row[0] in year:
             if row[1] == province and row[2] in days and row[3] in sex and row[4] in age:
@@ -48,6 +49,7 @@ def main():
                 parties_vehicle[row[0]][row[7]] += 1
                 drink_status[row[0]][row[8]] += 1
                 day_dict[row[0]][row[2]] += 1
+                sex_dict[row[0]][row[3]] += 1
                 if row[4] in range(21):
                     age_dict[num]['0-20'] += 1
                 elif row[4] in range(21, 41):
@@ -63,6 +65,10 @@ def main():
             for day in sorted(day_dict[num]):
                 if day in days:
                     print("วันที่ "+day+" จำนวน "+str(day_dict[num][day])+" คน")
+            print("* เพศของผู้ประสบอุบัติเหตุ *")
+            for text in sorted(sex_dict[num]):
+                if sex_dict[num][text] != 0:
+                    print(text+" : "+str(sex_dict[num][text])+" คน")
             print("* สถานะของผู้ประสบอุบัติเหตุ *")
             for text in sorted(status[num]):
                 if status[num][text] != 0:
@@ -80,7 +86,9 @@ def main():
                 if drink_status[num][text] != 0:
                     print(text+" : "+str(drink_status[num][text])+" คน")
             graph_seven(day, day_dict, num, province) ## Creat graph of seven dangerous days.
+            graph_drink_status(drink_status, num, province) ## Create graph of drink status.
             graph_vehicle(vehicle, parties_vehicle, num, province) ## Create graph of vehicles.
+            graph_sex(sex_dict, num, province) ## Creat graph of sex.
         print()
 
 def to_range(text, period):
@@ -117,18 +125,38 @@ def graph_vehicle(vehicle, parties_vehicle, year, province):
                            y = [vehicle[year][text], parties_vehicle[year][text]], name = text))
     layout = go.Layout(barmode='group')
     fig = go.Figure(data=data, layout=layout)
-    plot_url = py.plot(fig, filename='vehicles graph '+year+' '+province)
+    plot_url = py.plot(fig, filename='Vehicles graph '+year+' '+province)
 
 def graph_seven(day, day_dict, year, province):
     """Creat graph of seven dangerous days depends on input entered."""
     days_list, num_people = [], []
     for days in sorted(day_dict[year]):
         if day_dict[year][days] != 0:
-            days_list.append(days)
+            days_list.append('วันที่ ' + str(days))
             num_people.append(day_dict[year][days])
     fig = {'data': [{'labels': days_list, 'values': num_people, 'type': 'pie'}], \
-           'layout': {'title': 'Graph of seven dangerous days in' + str(year-543)}}
+           'layout': {'title': 'Graph of seven dangerous days in ' + str(int(year)-543)}}
 
-url = py.plot(fig, filename='vehicles graph '+year+' '+province)
+    url = py.plot(fig, filename='Seven dangerous days graph '+year+' '+province)
+
+def graph_sex(sex_dict, year, province):
+    """Creat graph of sex depends on input entered."""
+    data = []
+    for text in sorted(sex_dict[year]):
+        data.append(go.Bar(x = ["เพศ"], y = [sex_dict[year][text]], name = text))
+    layout = go.Layout(barmode='group')
+    fig = go.Figure(data=data, layout=layout)
+    plot_url = py.plot(fig, filename='Sex graph '+year+' '+province)
+
+def graph_drink_status(drink_status, year, province):
+    """Creat graph of sex depends on input entered."""
+    drink_list, num_people = [], []
+    for text in sorted(drink_status[year]):
+        if drink_status[year][text] != 0:
+            drink_list.append(text)
+            num_people.append(drink_status[year][text])
+    fig = {'data': [{'labels': drink_list, 'values': num_people, 'type': 'pie'}], \
+           'layout': {'title': 'Graph of drink status'}}
+    url = py.plot(fig, filename='Drink status graph '+year+' '+province)
 
 main()
