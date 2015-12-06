@@ -38,6 +38,7 @@ def main():
         drink_status[num] = {"ดื่ม": 0, "ไม่ดื่ม": 0, "ไม่ทราบ": 0}
         day_dict[num] = {'10': 0, '11': 0, '12': 0, '13': 0, '14': 0, '15': 0, '16': 0, \
                          '17': 0, '18': 0}
+        age_dict[num] = {'0-20': 0, '21-40': 0, '41-60': 0, '61-100': 0}
     for row in table:
         if row[0] in year:
             if row[1] == province and row[2] in days and row[3] in sex and row[4] in age:
@@ -47,6 +48,14 @@ def main():
                 parties_vehicle[row[0]][row[7]] += 1
                 drink_status[row[0]][row[8]] += 1
                 day_dict[row[0]][row[2]] += 1
+                if row[4] in range(21):
+                    age_dict[num]['0-20'] += 1
+                elif row[4] in range(21, 41):
+                     age_dict[num]['21-40'] += 1
+                elif row[4] in range(41, 61):
+                     age_dict[num]['41-60'] += 1
+                elif row[4] in range(61, 100):
+                     age_dict[num]['61-100'] += 1
     for num in sorted(total):
         print("ผู้ประสบอุบัติเหตุในปี "+num+" : "+str(total[num])+" คน")
         if total[num] != 0:
@@ -70,7 +79,7 @@ def main():
             for text in sorted(drink_status[num]):
                 if drink_status[num][text] != 0:
                     print(text+" : "+str(drink_status[num][text])+" คน")
-            #graph_seven(day, day_dict, num, province) ## Creat graph of seven dangerous days.
+            graph_seven(day, day_dict, num, province) ## Creat graph of seven dangerous days.
             graph_vehicle(vehicle, parties_vehicle, num, province) ## Create graph of vehicles.
         print()
 
@@ -109,5 +118,17 @@ def graph_vehicle(vehicle, parties_vehicle, year, province):
     layout = go.Layout(barmode='group')
     fig = go.Figure(data=data, layout=layout)
     plot_url = py.plot(fig, filename='vehicles graph '+year+' '+province)
+
+def graph_seven(day, day_dict, year, province):
+    """Creat graph of seven dangerous days depends on input entered."""
+    days_list, num_people = [], []
+    for days in sorted(day_dict[year]):
+        if day_dict[year][days] != 0:
+            days_list.append(days)
+            num_people.append(day_dict[year][days])
+    fig = {'data': [{'labels': days_list, 'values': num_people, 'type': 'pie'}], \
+           'layout': {'title': 'Graph of seven dangerous days in' + str(year-543)}}
+
+url = py.plot(fig, filename='vehicles graph '+year+' '+province)
 
 main()
