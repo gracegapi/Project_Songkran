@@ -24,7 +24,8 @@ def main():
         if age == False:
             print("Please input age between 0-200.")
     print("Processing...")
-    total, status, vehicle, parties_vehicle, drink_status, day_dict, age_dict, sex_dict = {}, {}, {}, {}, {}, {}, {}, {}
+    total, status, vehicle, parties_vehicle = {}, {}, {}, {}
+    drink_status, day_dict, age_dict, sex_dict = {}, {}, {}, {}
     for num in year: ## Create dict.
         total[num] = 0
         status[num] = {"ผู้ขับขี่": 0, "ผู้โดยสาร": 0, "คนเดินเท้า": 0, "ไม่ทราบ": 0}
@@ -92,7 +93,7 @@ def main():
         print()
 
 def to_range(text, period):
-    """Return list each number in this period depends on input entered, False otherwise."""
+    """Return list each number in this period depends on values incame, False otherwise."""
     if text[0] == '-':
         return False
     for char in text:
@@ -116,7 +117,7 @@ def fix_sex(sex):
     return sex
 
 def graph_vehicle(vehicle, parties_vehicle, year, province):
-    """Creat graph of vehicles depends on input entered."""
+    """Creat graph of vehicles depends on values incame."""
     data = []
     for text in sorted(vehicle[year]):
         if vehicle[year][text] == 0 and parties_vehicle[year][text] == 0:
@@ -128,7 +129,7 @@ def graph_vehicle(vehicle, parties_vehicle, year, province):
     plot_url = py.plot(fig, filename='Vehicles graph '+year+' '+province)
 
 def graph_seven(day, day_dict, year, province):
-    """Creat graph of seven dangerous days depends on input entered."""
+    """Creat graph of seven dangerous days depends on values incame."""
     days_list, num_people = [], []
     for days in sorted(day_dict[year]):
         if day_dict[year][days] != 0:
@@ -136,11 +137,10 @@ def graph_seven(day, day_dict, year, province):
             num_people.append(day_dict[year][days])
     fig = {'data': [{'labels': days_list, 'values': num_people, 'type': 'pie'}], \
            'layout': {'title': 'Graph of seven dangerous days in ' + str(int(year)-543)}}
-
     url = py.plot(fig, filename='Seven dangerous days graph '+year+' '+province)
 
 def graph_sex(sex_dict, year, province):
-    """Creat graph of sex depends on input entered."""
+    """Creat graph of sex depends on values incame."""
     data = []
     for text in sorted(sex_dict[year]):
         data.append(go.Bar(x = ["เพศ"], y = [sex_dict[year][text]], name = text))
@@ -149,7 +149,7 @@ def graph_sex(sex_dict, year, province):
     plot_url = py.plot(fig, filename='Sex graph '+year+' '+province)
 
 def graph_drink_status(drink_status, year, province):
-    """Creat graph of sex depends on input entered."""
+    """Creat graph of drink status depends on values incame."""
     drink_list, num_people = [], []
     for text in sorted(drink_status[year]):
         if drink_status[year][text] != 0:
