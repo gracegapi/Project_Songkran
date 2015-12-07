@@ -8,21 +8,12 @@ def main():
     data = csv.reader(file)
     table = [row for row in data]
     print("แสดงจำนวนการเกิดอุบัติเหตุในช่วงเทศกาลสงกรานต์ระหว่างวันที่ 10-18")
-    year, days, age = False, False, False
+    year, days = False, False
     while year == False:
         year = to_range(input("ช่วงเวลา(Ex. 2554-2557) : "), list(range(2551, 2558)))
         if year == False:
             print("Please input year between 2551-2557.")
     province = input("จังหวัด(Ex. กรุงเทพมหานคร) : ")
-    while days == False:
-        days = to_range(input("วันที่เกิดเหตุ(Ex. 11-15) : "), list(range(10, 19)))
-        if days == False:
-            print("Please input day between 10-18.")
-    sex = fix_sex([input("เพศ(ถ้าต้องการดูทั้งหมดพิมพ์ All) : ").lower()])
-    while age == False:
-        age = to_range(input('ช่วงอายุ(Ex. 15-27) : '), list(range(201)))
-        if age == False:
-            print("Please input age between 0-200.")
     print("Processing...")
     total, status, vehicle, parties_vehicle = {}, {}, {}, {}
     drink_status, day_dict, age_dict, sex_dict = {}, {}, {}, {}
@@ -39,27 +30,28 @@ def main():
         drink_status[num] = {"ดื่ม": 0, "ไม่ดื่ม": 0, "ไม่ทราบ": 0}
         day_dict[num] = {'10': 0, '11': 0, '12': 0, '13': 0, '14': 0, '15': 0, '16': 0, \
                          '17': 0, '18': 0}
-        age_dict[num] = {'0-20': {'ชาย': 0, 'หญิง': 0}, '21-40': {'ชาย': 0, 'หญิง': 0}, \
+        age_dict[num] = {'ไม่ทราบ': {'ชาย': 0, 'หญิง': 0}, '1-20': {'ชาย': 0, 'หญิง': 0}, '21-40': {'ชาย': 0, 'หญิง': 0}, \
                          '41-60': {'ชาย': 0, 'หญิง': 0}, '61-100': {'ชาย': 0, 'หญิง': 0}}
         sex_dict[num] = {"ชาย": 0, "หญิง": 0}
     for row in table:
-        if row[0] in year:
-            if row[1] == province and row[2] in days and row[3] in sex and row[4] in age:
-                total[row[0]] += 1
-                status[row[0]][row[5]] += 1
-                vehicle[row[0]][row[6]] += 1
-                parties_vehicle[row[0]][row[7]] += 1
-                drink_status[row[0]][row[8]] += 1
-                day_dict[row[0]][row[2]] += 1
-                sex_dict[row[0]][row[3]] += 1
-                if row[4] in range(21):
-                    age_dict[row[0]]['0-20'][row[3]] += 1
-                elif row[4] in range(21, 41):
-                    age_dict[row[0]]['21-40'][row[3]] += 1
-                elif row[4] in range(41, 61):
-                    age_dict[row[0]]['41-60'][row[3]] += 1
-                elif row[4] in range(61, 100):
-                    age_dict[row[0]]['61-100'][row[3]] += 1
+        if row[0] in year and row[1] == province:
+            total[row[0]] += 1
+            status[row[0]][row[5]] += 1
+            vehicle[row[0]][row[6]] += 1
+            parties_vehicle[row[0]][row[7]] += 1
+            drink_status[row[0]][row[8]] += 1
+            day_dict[row[0]][row[2]] += 1
+            sex_dict[row[0]][row[3]] += 1
+            if int(row[4]) in range(1, 21):
+                age_dict[row[0]]['1-20'][row[3]] += 1
+            elif int(row[4]) in range(21, 41):
+                age_dict[row[0]]['21-40'][row[3]] += 1
+            elif int(row[4]) in range(41, 61):
+                age_dict[row[0]]['41-60'][row[3]] += 1
+            elif int(row[4]) in range(61, 100):
+                age_dict[row[0]]['61-100'][row[3]] += 1
+            else:
+                age_dict[row[0]]['ไม่ทราบ'][row[3]] += 1
     for num in sorted(total):
         print("ผู้ประสบอุบัติเหตุในปี "+num+" : "+str(total[num])+" คน")
         if total[num] != 0:
@@ -91,6 +83,8 @@ def main():
             graph_drink_status(drink_status, num, province) ## Create graph of drink status.
             graph_vehicle(vehicle, parties_vehicle, num, province) ## Create graph of vehicles.
             graph_sex(sex_dict, age_dict, num, province) ## Creat graph of sex.
+            for text in sorted(age_dict[num]):
+                print(text, age_dict[num][text])
         print()
 
 def to_range(text, period):
