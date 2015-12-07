@@ -8,7 +8,7 @@ def main():
     data = csv.reader(file)
     table = [row for row in data]
     print("แสดงจำนวนการเกิดอุบัติเหตุในช่วงเทศกาลสงกรานต์ระหว่างวันที่ 10-18")
-    year, days = False, False
+    year = False
     while year == False:
         year = to_range(input("ช่วงเวลา(Ex. 2554-2557) : "), list(range(2551, 2558)))
         if year == False:
@@ -28,8 +28,9 @@ def main():
                                 "ไม่มี/ล้มเอง": 0, "ปิคอัพ": 0, "อื่นๆ": 0, "รถโดยสารใหญ่": 0, \
                                 "รถโดยสาร4ล้อ": 0, "รถบรรทุก": 0, "รถตู้": 0}
         drink_status[num] = {"ดื่ม": 0, "ไม่ดื่ม": 0, "ไม่ทราบ": 0}
-        day_dict[num] = {'10': 0, '11': 0, '12': 0, '13': 0, '14': 0, '15': 0, '16': 0, \
-                         '17': 0, '18': 0}
+        day_dict[num] = {'10': 0, '11': 0, '12': 0, '13': 0, '14': 0, '15': 0, '16': 0}\
+            if num == '2552' else {'12': 0, '13': 0, '14': 0, '15': 0, '16': 0, '17': 0, '18': 0}\
+            if num == '2553' else {'11': 0, '12': 0, '13': 0, '14': 0, '15': 0, '16': 0, '17': 0}
         age_dict[num] = {'ไม่ทราบ': {'ชาย': 0, 'หญิง': 0}, '1-20': {'ชาย': 0, 'หญิง': 0}, '21-40': {'ชาย': 0, 'หญิง': 0}, \
                          '41-60': {'ชาย': 0, 'หญิง': 0}, '61-100': {'ชาย': 0, 'หญิง': 0}}
         sex_dict[num] = {"ชาย": 0, "หญิง": 0}
@@ -57,8 +58,7 @@ def main():
         if total[num] != 0:
             print("* จำนวนผู้ประสบอุบัติเหตุในแต่ละวัน *")
             for day in sorted(day_dict[num]):
-                if day in days:
-                    print("วันที่ "+day+" จำนวน "+str(day_dict[num][day])+" คน")
+                print("วันที่ "+day+" จำนวน "+str(day_dict[num][day])+" คน")
             print("* เพศของผู้ประสบอุบัติเหตุ *")
             for text in sorted(sex_dict[num]):
                 if sex_dict[num][text] != 0:
@@ -79,12 +79,10 @@ def main():
             for text in sorted(drink_status[num]):
                 if drink_status[num][text] != 0:
                     print(text+" : "+str(drink_status[num][text])+" คน")
-            graph_seven(day, day_dict, num, province) ## Creat graph of seven dangerous days.
+            graph_seven(day_dict, num, province) ## Creat graph of seven dangerous days.
             graph_drink_status(drink_status, num, province) ## Create graph of drink status.
             graph_vehicle(vehicle, parties_vehicle, num, province) ## Create graph of vehicles.
             graph_sex(sex_dict, age_dict, num, province) ## Creat graph of sex.
-            for text in sorted(age_dict[num]):
-                print(text, age_dict[num][text])
         print()
 
 def to_range(text, period):
@@ -102,15 +100,6 @@ def to_range(text, period):
         return False
     return [str(num) for num in list(range(text[0], text[1]+1))]
 
-def fix_sex(sex):
-    """Return sex of input entered."""
-    sex = ['ชาย', 'หญิง'] if sex == ["all"] else sex
-    sex = ['ชาย'] if sex == ['boy'] or sex == ['man'] or sex == ['men'] or sex == ['male'] or \
-          sex == ['gentle'] or sex == ['masculine'] else sex
-    sex = ['หญิง'] if sex == ['girl'] or sex == ['woman'] or sex == ['female'] or \
-          sex == ['women'] or sex == ['lady'] else sex
-    return sex
-
 def graph_vehicle(vehicle, parties_vehicle, year, province):
     """Creat graph of vehicles depends on values incame."""
     data = []
@@ -123,7 +112,7 @@ def graph_vehicle(vehicle, parties_vehicle, year, province):
     fig = go.Figure(data=data, layout=layout)
     plot_url = py.plot(fig, filename='Vehicles graph '+year+' '+province)
 
-def graph_seven(day, day_dict, year, province):
+def graph_seven(day_dict, year, province):
     """Creat graph of seven dangerous days depends on values incame."""
     days_list, num_people = [], []
     for days in sorted(day_dict[year]):
@@ -138,11 +127,14 @@ def graph_sex(sex_dict, age_dict, year, province):
     """Creat graph of sex depends on values incame."""
     data = []
     for text in sorted(sex_dict[year]):
-        data.append(go.Bar(x = ["เพศ", "ช่วงอายุ 0-20", "ช่วงอายุ 21-40", "ช่วงอายุ 41-60",\
-                                "ช่วงอายุ 61-100"], \
-                           y = [sex_dict[year][text], age_dict[year]['0-20'][text], \
-                                age_dict[year]['21-40'][text], age_dict[year]['41-60'][text], \
-                                age_dict[year]['61-100'][text]], name = text))
+        horizontal = ["เพศ", "ช่วงอายุ 1-20", "ช่วงอายุ 21-40", "ช่วงอายุ 41-60", "ช่วงอายุ 61-100"]
+        vertical = [sex_dict[year][text], age_dict[year]['1-20'][text], \
+                    age_dict[year]['21-40'][text], age_dict[year]['41-60'][text], \
+                    age_dict[year]['61-100'][text]]
+        if age_dict[year]['ไม่ทราบ']['ชาย'] != 0 or age_dict[year]['ไม่ทราบ']['หญิง'] != 0:
+            horizontal.append("ไม่ทราบอายุ")
+            vertical.append(age_dict[year]['ไม่ทราบ'][text])
+        data.append(go.Bar(x = horizontal, y = vertical, name = text))
     layout = go.Layout(barmode='group')
     fig = go.Figure(data=data, layout=layout)
     plot_url = py.plot(fig, filename='Sex graph '+year+' '+province)
