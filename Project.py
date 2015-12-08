@@ -57,7 +57,7 @@ def main():
                 age[row[0]]['61-100'][row[3]] += 1
             else:
                 age[row[0]]['ไม่ทราบ'][row[3]] += 1
-            if row[8] == 'ทุเลา/หาย':
+            if row[9] == 'ทุเลา/หาย':
                 treatment[row[0]]['heal'] += 1
             else:
                 treatment[row[0]]['dead'] += 1
@@ -93,9 +93,9 @@ def main():
                 for text2 in sorted(age[num][text]):
                     print(text2+" "+str(age[num][text][text2])+" คน", end=" ")
                 print()
-            print("* จำนวนผู้บาดเจ็บและเสียชีวิต *")
-            print("ผู้บาดเจ็บ"+" : "+str(treatment[num]['heal'])+" คน")
-            print("เสียชีวิต"+" : "+str(treatment[num]['dead'])+" คน")
+            print("* จำนวนรอดชีวิตและเสียชีวิต *")
+            print("ผู้รอดชีวิต"+" : "+str(treatment[num]['heal'])+" คน")
+            print("ผู้เสียชีวิต"+" : "+str(treatment[num]['dead'])+" คน")
             graph_seven(days, num, province)  # Create graph of seven dangerous days.
             graph_drink_status(drink_status, num, province)  # Create graph of drink status.
             graph_vehicle(vehicle, parties_vehicle, num, province)  # Create graph of vehicles.
@@ -105,7 +105,7 @@ def main():
 
 
 def to_range(text, period):
-    """Return list each number in this period depends on values incame, False otherwise."""
+    """Return list each number in this period depends on values incame, 'False' otherwise."""
     if text[0] == '-':
         return 'False'
     for char in text:
@@ -141,7 +141,7 @@ def graph_seven(days, year, province):
             days_list.append('วันที่ ' + str(day))
             num_people.append(days[year][day])
     fig = {'data': [{'labels': days_list, 'values': num_people, 'type': 'pie'}], \
-           'layout': {'title': 'Graph of seven dangerous days in ' + str(int(year)-543)}}
+           'layout': {'title': 'Graph of seven dangerous days'}}
     url = py.plot(fig, filename='Seven dangerous days graph '+year+' '+province)
 
 
@@ -176,9 +176,9 @@ def graph_drink_status(drink_status, year, province):
 def graph_treatment(treatment, year, province):
     """Create graph of treatment depends on values incame."""
     data = []
-    data.append(go.Bar(x=["จำนวนผู้บาดเจ็บและเสียชีวิต"], y=[treatment[year]['heal']], \
-                       name='ผู้บาดเจ็บ'))
-    data.append(go.Bar(x=["จำนวนผู้บาดเจ็บและเสียชีวิต"], y=[treatment[year]['dead']], \
+    data.append(go.Bar(x=["จำนวนผู้รอดชีวิตและผู้เสียชีวิต"], y=[treatment[year]['heal']], \
+                       name='ผู้รอดชีวิต'))
+    data.append(go.Bar(x=["จำนวนผู้รอดชีวิตและผู้เสียชีวิต"], y=[treatment[year]['dead']], \
                        name='ผู้เสียชีวิต'))
     layout = go.Layout(barmode='group')
     fig = go.Figure(data=data, layout=layout)
