@@ -2,22 +2,24 @@
 import csv
 import plotly.plotly as py
 import plotly.graph_objs as go
+
+
 def main():
     """"""
     file = open('database.txt')
     data = csv.reader(file)
     table = [row for row in data]
     print("แสดงจำนวนการเกิดอุบัติเหตุในช่วงเทศกาลสงกรานต์ระหว่างวันที่ 10-18")
-    year = False
-    while year == False:
+    year = 'False'
+    while year == 'False':
         year = to_range(input("ช่วงเวลา(Ex. 2554-2557) : "), list(range(2551, 2558)))
-        if year == False:
+        if year == 'False':
             print("Please input year between 2551-2557.")
     province = input("จังหวัด(Ex. กรุงเทพมหานคร) : ")
     print("Processing...")
     total, status, vehicle, parties_vehicle, treatment = {}, {}, {}, {}, {}
     drink_status, days, age, sex = {}, {}, {}, {}
-    for num in year: ## Create dict.
+    for num in year:  # Create dict.
         total[num] = 0
         status[num] = {"ผู้ขับขี่": 0, "ผู้โดยสาร": 0, "คนเดินเท้า": 0, "ไม่ทราบ": 0}
         vehicle[num] = {"รถเก๋ง/แท็กซี่": 0, "จักรยานยนต์": 0, "รถจักรยาน": 0, "ไม่ทราบ": 0, \
@@ -32,8 +34,8 @@ def main():
             if num == '2552' else {'12': 0, '13': 0, '14': 0, '15': 0, '16': 0, '17': 0, '18': 0}\
             if num == '2553' else {'11': 0, '12': 0, '13': 0, '14': 0, '15': 0, '16': 0, '17': 0}
         age[num] = {'ไม่ทราบ': {'ชาย': 0, 'หญิง': 0}, '1-20': {'ชาย': 0, 'หญิง': 0}, \
-                         '21-40': {'ชาย': 0, 'หญิง': 0}, '41-60': {'ชาย': 0, 'หญิง': 0}, \
-                         '61-100': {'ชาย': 0, 'หญิง': 0}}
+                    '21-40': {'ชาย': 0, 'หญิง': 0}, '41-60': {'ชาย': 0, 'หญิง': 0}, \
+                    '61-100': {'ชาย': 0, 'หญิง': 0}}
         sex[num] = {"ชาย": 0, "หญิง": 0}
         treatment[num] = {'heal': 0, 'dead': 0}
     for row in table:
@@ -94,27 +96,29 @@ def main():
             print("* จำนวนผู้บาดเจ็บและเสียชีวิต *")
             print("ผู้บาดเจ็บ"+" : "+str(treatment[num]['heal'])+" คน")
             print("เสียชีวิต"+" : "+str(treatment[num]['dead'])+" คน")
-            graph_seven(days, num, province) ## Create graph of seven dangerous days.
-            graph_drink_status(drink_status, num, province) ## Create graph of drink status.
-            graph_vehicle(vehicle, parties_vehicle, num, province) ## Create graph of vehicles.
-            graph_sex(sex, age, num, province) ## Create graph of sex.
-            graph_treatment(treatment, num, province) ## Create graph of treatment.
+            graph_seven(days, num, province)  # Create graph of seven dangerous days.
+            graph_drink_status(drink_status, num, province)  # Create graph of drink status.
+            graph_vehicle(vehicle, parties_vehicle, num, province)  # Create graph of vehicles.
+            graph_sex(sex, age, num, province)  # Create graph of sex.
+            graph_treatment(treatment, num, province)  # Create graph of treatment.
         print()
+
 
 def to_range(text, period):
     """Return list each number in this period depends on values incame, False otherwise."""
     if text[0] == '-':
-        return False
+        return 'False'
     for char in text:
         if char.isalpha():
-            return False
+            return 'False'
     if "-" in text:
         text = [int(num) for num in text.split("-")]
     else:
         text = [int(text), int(text)]
-    if text[0] not in period or text[1] not in period: ## Fix period.
-        return False
+    if text[0] not in period or text[1] not in period: # Fix period.
+        return 'False'
     return [str(num) for num in list(range(text[0], text[1]+1))]
+
 
 def graph_vehicle(vehicle, parties_vehicle, year, province):
     """Create graph of vehicles depends on values incame."""
@@ -122,11 +126,12 @@ def graph_vehicle(vehicle, parties_vehicle, year, province):
     for text in sorted(vehicle[year]):
         if vehicle[year][text] == 0 and parties_vehicle[year][text] == 0:
             continue
-        data.append(go.Bar(x = ["ยานพาหนะของผู้ประสบอุบัติเหตุ", "ยานพาหนะของคู่กรณี"], \
-                           y = [vehicle[year][text], parties_vehicle[year][text]], name = text))
+        data.append(go.Bar(x=["ยานพาหนะของผู้ประสบอุบัติเหตุ", "ยานพาหนะของคู่กรณี"], \
+                           y=[vehicle[year][text], parties_vehicle[year][text]], name=text))
     layout = go.Layout(barmode='group')
     fig = go.Figure(data=data, layout=layout)
     plot_url = py.plot(fig, filename='Vehicles graph '+year+' '+province)
+
 
 def graph_seven(days, year, province):
     """Create graph of seven dangerous days depends on values incame."""
@@ -139,6 +144,7 @@ def graph_seven(days, year, province):
            'layout': {'title': 'Graph of seven dangerous days in ' + str(int(year)-543)}}
     url = py.plot(fig, filename='Seven dangerous days graph '+year+' '+province)
 
+
 def graph_sex(sex, age, year, province):
     """Create graph of sex depends on values incame."""
     data = []
@@ -149,10 +155,11 @@ def graph_sex(sex, age, year, province):
         if age[year]['ไม่ทราบ']['ชาย'] != 0 or age[year]['ไม่ทราบ']['หญิง'] != 0:
             horizontal.append("ไม่ทราบอายุ")
             vertical.append(age[year]['ไม่ทราบ'][text])
-        data.append(go.Bar(x = horizontal, y = vertical, name = text))
+        data.append(go.Bar(x=horizontal, y=vertical, name=text))
     layout = go.Layout(barmode='group')
     fig = go.Figure(data=data, layout=layout)
     plot_url = py.plot(fig, filename='Sex graph '+year+' '+province)
+
 
 def graph_drink_status(drink_status, year, province):
     """Create graph of drink status depends on values incame."""
@@ -165,13 +172,14 @@ def graph_drink_status(drink_status, year, province):
            'layout': {'title': 'Graph of drink status'}}
     url = py.plot(fig, filename='Drink status graph '+year+' '+province)
 
+
 def graph_treatment(treatment, year, province):
     """Create graph of treatment depends on values incame."""
     data = []
-    data.append(go.Bar(x = ["จำนวนผู้บาดเจ็บและเสียชีวิต"], y = [treatment[year]['heal']], \
-                       name = 'ผู้บาดเจ็บ'))
-    data.append(go.Bar(x = ["จำนวนผู้บาดเจ็บและเสียชีวิต"], y = [treatment[year]['dead']], \
-                       name = 'ผู้เสียชีวิต'))
+    data.append(go.Bar(x=["จำนวนผู้บาดเจ็บและเสียชีวิต"], y=[treatment[year]['heal']], \
+                       name='ผู้บาดเจ็บ'))
+    data.append(go.Bar(x=["จำนวนผู้บาดเจ็บและเสียชีวิต"], y=[treatment[year]['dead']], \
+                       name='ผู้เสียชีวิต'))
     layout = go.Layout(barmode='group')
     fig = go.Figure(data=data, layout=layout)
     plot_url = py.plot(fig, filename='Treatment graph '+year+' '+province)
