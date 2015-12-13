@@ -5,7 +5,7 @@ import plotly.graph_objs as go
 
 
 def main():
-    """"""
+    """Read data and input, and then analyze to show the graphs in https://plot.ly."""
     file = open('database.txt')
     data = csv.reader(file)
     table = [row for row in data]
